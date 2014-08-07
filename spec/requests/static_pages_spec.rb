@@ -36,7 +36,7 @@ describe "StaticPages" do
 
     it "should have the right title 'About Us'" do
       visit '/static_pages/about'
-      expect(page).to have_title("#{base_title}| About Us")
+      expect(page).to have_title("#{base_title} | About Us")
     end
   end
 
@@ -48,7 +48,7 @@ describe "StaticPages" do
 
     it "should have the right title 'Contact Us'" do
       visit '/static_pages/contact'
-      expect(page).to have_title("#{base_title}| Contact Us")
+      expect(page).to have_title("#{base_title} | Contact Us")
     end
   end
 
