@@ -11,6 +11,7 @@ class User < ActiveRecord::Base
   has_secure_password
   validates :password, length: { minimum: 6 }
 
+  # User. -> method for class, don't need a user instance to work
   def User.new_remember_token
     SecureRandom.urlsafe_base64
   end
@@ -20,8 +21,9 @@ class User < ActiveRecord::Base
   end
 
   private
-
+    # This method is used only to initiate the remember_token attribuite when create a new user
     def create_remember_token
+      # self means this user's attribute which will be saved in database
       self.remember_token = User.digest(User.new_remember_token)
     end
 end
