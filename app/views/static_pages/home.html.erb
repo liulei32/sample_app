@@ -1,13 +1,5 @@
-<div class="center hero-unit">
-  <h1>欢迎光临京西商城</h1>
-
-  <h2>
-    网站正在建设中，购物请暂时前往
-    <a href="http://www.newegg.cn/">新蛋</a>
-    。
-  </h2>
-
-  <%= link_to "立刻注册，尽享优惠！", signup_path, class: "btn btn-large btn-primary" %>
-</div>
-
-<%= link_to image_tag("reward88.gif", alt: "Rails"), 'https://webmail.skhms.com/' %>
+<% if signed_in? %>
+  <%= render 'shared/home_signed_in' %>
+<% else %>
+  <%= render 'shared/home_non_signed_in' %>
+<% end %>

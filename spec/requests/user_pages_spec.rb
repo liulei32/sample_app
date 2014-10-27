@@ -97,10 +97,44 @@ describe "User pages" do
 
   describe "Profile page" do
     let(:user) { FactoryGirl.create(:user) }
+    let!(:m1) { FactoryGirl.create(:micropost, user: user, content: "Foo") }
+    let!(:m2) { FactoryGirl.create(:micropost, user: user, content: "Bar") }
+
     before { visit user_path(user) }
   
     it { should have_content(user.name) }
     it { should have_title(user.name) }
+
+    describe "microposts" do
+      it { should have_content(m1.content) }
+      it { should have_content(m2.content) }
+      it { should have_content(user.microposts.count) }
+    end
+
+    describe "pagination" do
+      before { 50.times { FactoryGirl.create(:micropost, user: user) } }
+      after { user.microposts.delete_all }
+
+      before { visit user_path(user) }
+      it { should have_selector('div.pagination') }
+
+      it "should list each micropost" do
+        user.microposts.paginate(page: 1).each do |m|
+          expect(page).to have_selector('li', text: m.content)
+        end
+      end
+    end
+
+    describe "visit other's page" do
+      let(:other) { FactoryGirl.create(:user) }
+      let!(:m3) { FactoryGirl.create(:micropost, user: other, content: "foobar") }
+      before do
+        visit user_path(other)
+      end
+
+      it { should have_content(m3.content) }
+      it { should_not have_link('delete', m3) }
+    end
   end
 
   describe "edit" do
@@ -117,7 +151,10 @@ describe "User pages" do
     end
 
     describe "with invalid information" do
-      before { click_button "Save changes" }
+      before do
+        fill_in "Old password", with: user.password
+        click_button "Save changes"
+      end
 
       it { should have_content('error') }
     end
@@ -128,6 +165,7 @@ describe "User pages" do
       before do
         fill_in "Name",   with: new_name
         fill_in "Email",  with: new_email
+        fill_in "Old password", with: user.password
         fill_in "Password", with: user.password
         fill_in "Confirm Password", with: user.password
         click_button "Save changes"
